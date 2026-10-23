@@ -6,7 +6,7 @@ about the water. Run: python3 build.py"""
 import html, json
 
 E = html.escape
-VIEW = "nspJC3cZSItvCm4H1MvKNY"  # Pool Relay: Lee County/FGCU Aquatics Center, lane by lane (public)
+VIEW = "6SufQlTuiaS9PL2fOmkJKG"  # Pool Relay: Lee County/FGCU Aquatics Center, lane by lane (public)
 FAC = "Lee County/FGCU Aquatics Center"
 SITE = "https://www.fgcu.edu/university-recreation-and-wellness/aquatics/"
 POOLS = json.dumps([dict(slug="fgcu", name=FAC, facility=FAC, hideHead=True,

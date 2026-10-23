@@ -11,4 +11,4 @@ facts about the water.
 - `build.py`: generates the five pages.
 - `finder.js`: `#today`, `#week` (one column per pool, with lane counts), and `data-live` elements
   (`hours`, `exceptions`, `last`, `dates`, `when`, `closures`).
-- Pool Relay view: `nspJC3cZSItvCm4H1MvKNY` (Lee County/FGCU Aquatics Center, lane by lane).
+- Pool Relay view: `6SufQlTuiaS9PL2fOmkJKG` (Lee County/FGCU Aquatics Center, lane by lane).
