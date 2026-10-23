@@ -69,9 +69,9 @@ def page(file, crumb, body):
 
 HOURS_BOX = f"""<aside class="hours">
         <h2>Open swim hours</h2>
-        <div {live("hours", format="dl")}><p class="muted">…</p></div>
-        <div class="adjusted" {live("exceptions")} hidden></div>
-        <p class="muted small" style="margin:8px 0 0">Scheduled through <span {live("last")}>…</span>. The facility closes at 55&deg;F and below, and for 30 minutes after lightning within 10 miles.</p>
+        <div {live("hours", format="dl", title="Lap & Rec Swim")}><p class="muted">…</p></div>
+        <div class="adjusted" {live("exceptions", title="Lap & Rec Swim")} hidden></div>
+        <p class="muted small" style="margin:8px 0 0">Scheduled through <span {live("last", title="Lap & Rec Swim")}>…</span>. The facility closes at 55&deg;F and below, and for 30 minutes after lightning within 10 miles.</p>
       </aside>"""
 
 NOW_BOX = f"""<section class="now" aria-live="polite">
@@ -179,9 +179,9 @@ page("operating-hours.html", 'Operating Hours', f"""
     <p class="lede">All facility hours are subject to change without notice; this page always shows the current schedule. Other University
       Recreation &amp; Wellness facilities are on FGCU's <a href="https://www.fgcu.edu/university-recreation-and-wellness/operatinghours" target="_blank" rel="noopener">Operating Hours page</a>.</p>
     <div class="top2">
-      <section class="now"><h2>Regular open swim hours</h2><div class="hours" style="border:0;background:none;padding:0"><div {live("hours", format="dl")}><p class="muted">…</p></div></div>
-        <p class="muted small" style="margin:6px 0 0">Scheduled through <span {live("last")}>…</span>.</p></section>
-      <aside class="hours"><h2>Adjusted hours</h2><div class="adjusted" {live("exceptions")}><p class="muted">None coming up.</p></div></aside>
+      <section class="now"><h2>Regular open swim hours</h2><div class="hours" style="border:0;background:none;padding:0"><div {live("hours", format="dl", title="Lap & Rec Swim")}><p class="muted">…</p></div></div>
+        <p class="muted small" style="margin:6px 0 0">Scheduled through <span {live("last", title="Lap & Rec Swim")}>…</span>.</p></section>
+      <aside class="hours"><h2>Adjusted hours</h2><div class="adjusted" {live("exceptions", title="Lap & Rec Swim")}><p class="muted">None coming up.</p></div></aside>
     </div>
     <div class="btns"><a class="btn" href="lane-availability.html">Daily lane availability</a></div>
     <h2>Weather policies</h2>

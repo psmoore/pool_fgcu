@@ -233,8 +233,11 @@
     return out.map(([a, b]) => span(hhmm(a), hhmm(b))).join(` ${T("and")} `);
   }
   // A program's regular week: each weekday it runs in at least half its weeks, with that weekday's most common hours.
-  function weekly(evs, pick, whole) {
-    const end = addDays(TODAY, AHEAD - 1);
+  // `season` reads the whole scheduled season instead of four weeks: a pool's regular hours
+  // shouldn't turn "Closed" because a few Saturdays in a row are closures.
+  function weekly(evs, pick, whole, season) {
+    const last = evs.filter((o) => !o.allDay && pick(o)).reduce((m, o) => (o.date > m ? o.date : m), TODAY);
+    const end = season ? last : addDays(TODAY, AHEAD - 1);
     const byDate = {};
     for (const o of evs) if (!o.allDay && o.date >= TODAY && o.date <= end && pick(o) && !closedOn(evs, o.date)) (byDate[o.date] ||= []).push(o);
     const dates = Object.keys(byDate).sort();
@@ -287,6 +290,9 @@
   }
   document.querySelectorAll("[data-live]").forEach((el) => {
     const pool = POOLS.find((p) => p.slug === el.dataset.pool);
+    // data-title narrows hours, adjusted days and the last day to one program (e.g. open swim).
+    const only = el.dataset.title ? el.dataset.title.split("|") : null;
+    const inProgram = (o) => !only || only.includes(o.orig || o.title);
     feed(el.dataset.view).then((byFac) => {
       const evs = byFac[pool.facility] || [];
       const mode = el.dataset.live;
@@ -294,7 +300,7 @@
         const want = el.dataset.title.split("|");
         el.textContent = whenText(evs, (o) => want.includes(o.orig || o.title));
       } else if (mode === "hours") {
-        const w = weekly(evs, (o) => !/^closes early/i.test(o.orig || o.title), true);
+        const w = weekly(evs, (o) => inProgram(o) && !/^closes early/i.test(o.orig || o.title), true, true);
         const hours = (w ? w.hours : Array(7).fill("")).map((h) => h || T("Closed"));
         const groups = dayGroups(hours, el.dataset.format === "dl" ? "long" : "short");
         el.innerHTML = el.dataset.format === "dl"
@@ -315,8 +321,8 @@
         el.textContent = list.length ? list.map((o) => `${weekday(o.date, "short")}, ${monthDay(o.date)}, ${span(o.start, o.end)}`).join("; ") : (el.dataset.empty || T("Nothing scheduled in the next four weeks"));
       } else if (mode === "exceptions") {
         // Days whose hours differ from that weekday's regular hours, through the last scheduled day.
-        const w = weekly(evs, (o) => true, true);
-        const open = evs.filter((o) => !o.allDay);
+        const w = weekly(evs, inProgram, true, true);
+        const open = evs.filter((o) => !o.allDay && inProgram(o));
         const lastDay = open.reduce((m, o) => (o.date > m ? o.date : m), TODAY);
         const rows = [];
         for (let d = TODAY; d <= lastDay && rows.length < 12; d = addDays(d, 1)) {
@@ -335,7 +341,7 @@
         const day = (d) => `${weekday(d)}, ${monthDay(d)}`;
         el.innerHTML = `<ul>${rows.map((r) => `<li><b>${esc(r.from === r.to ? day(r.from) : `${day(r.from)} – ${day(r.to)}`)}:</b> ${esc(r.h)}${r.why && !/^closed$/i.test(r.why) ? ` (${esc(r.why)})` : ""}</li>`).join("")}</ul>`;
       } else if (mode === "last") {
-        const open = evs.filter((o) => !o.allDay && o.date >= TODAY);
+        const open = evs.filter((o) => !o.allDay && o.date >= TODAY && inProgram(o));
         el.textContent = open.length ? `${weekday(open[open.length - 1].date)}, ${monthDay(open[open.length - 1].date)}` : "—";
       } else if (mode === "closures") {
         const list = closureList(evs);
